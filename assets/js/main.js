@@ -94,6 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 document.body.classList.remove('rtl-layout');
             }
+            
+            // Force reload the page to ensure complete language switch
+            // This ensures all dynamic elements are properly reset
+            location.reload();
         });
     }
     

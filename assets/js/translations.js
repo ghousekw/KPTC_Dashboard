@@ -651,10 +651,16 @@ const translations = {
 // Get translation for a given text
 function getTranslation(text, lang) {
     if (!text) return '';
+    
+    // When language is English, just return the original text
     if (lang === 'en') return text;
     
+    // For Arabic, use the translation lookup
     if (translations[text] && translations[text][lang]) {
         return translations[text][lang];
     }
+    
+    // If we're in Arabic mode and still have some English text elements
+    // This helps with retaining original English content if needed
     return text;
 } 
