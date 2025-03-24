@@ -436,18 +436,52 @@ function initializeAdditionalCharts(options) {
     if (technicianCanvas && technicianCanvas.getContext) {
         try {
             const technicianChart = new Chart(technicianCanvas, {
-                type: 'bar', // Changed from horizontalBar which is deprecated
+                type: 'bar',
                 data: {
                     labels: ['Tech 1', 'Tech 2', 'Tech 3', 'Tech 4', 'Tech 5'],
                     datasets: [{
                         label: 'Active Jobs',
                         backgroundColor: '#4e73df',
-                        data: [4, 3, 2, 5, 3]
+                        data: [4, 3, 2, 5, 3],
+                        barThickness: 20,
+                        maxBarThickness: 30
                     }]
                 },
                 options: {
                     ...options,
                     indexAxis: 'y', // This replaces the deprecated horizontalBar type
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            beginAtZero: true,
+                            max: 6, // Set maximum scale to show values clearly
+                            grid: {
+                                color: '#f0f0f0'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw} jobs`;
+                                }
+                            }
+                        }
+                    }
                 }
             });
         } catch (error) {
