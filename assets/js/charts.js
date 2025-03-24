@@ -337,11 +337,9 @@ function initializeMonthlyTrendsChart(options) {
  * Initialize additional charts
  */
 function initializeAdditionalCharts(options) {
-    // Initialize additional charts - Currently these won't be initialized
-    // due to duplicate IDs being used in the HTML. Fix before enabling.
+    // Initialize additional charts since we fixed the duplicate IDs
     
-    // Repair Status Chart (commented out due to missing/duplicate IDs)
-    /*
+    // Repair Status Chart
     const repairStatusCanvas = document.getElementById('repairStatusChart');
     if (repairStatusCanvas && repairStatusCanvas.getContext) {
         const repairStatusChart = new Chart(repairStatusCanvas, {
@@ -359,10 +357,8 @@ function initializeAdditionalCharts(options) {
             }
         });
     }
-    */
     
-    // Workflow Status Chart (commented out due to missing/duplicate IDs)
-    /*
+    // Workflow Status Chart
     const workflowCanvas = document.getElementById('approvalWorkflowChart');
     if (workflowCanvas && workflowCanvas.getContext) {
         const workflowChart = new Chart(workflowCanvas, {
@@ -392,24 +388,70 @@ function initializeAdditionalCharts(options) {
             }
         });
     }
-    */
     
-    // Technician Jobs Chart (commented out due to missing/duplicate IDs)
-    /*
-    const technicianCanvas = document.getElementById('technicianJobsChart');
-    if (technicianCanvas && technicianCanvas.getContext) {
-        const technicianChart = new Chart(technicianCanvas, {
-            type: 'horizontalBar',
+    // Monthly Values Chart (previously commented out)
+    const monthlyValuesCanvas = document.getElementById('monthlyValuesChart');
+    if (monthlyValuesCanvas && monthlyValuesCanvas.getContext) {
+        const monthlyValuesChart = new Chart(monthlyValuesCanvas, {
+            type: 'line',
             data: {
-                labels: ['Tech 1', 'Tech 2', 'Tech 3', 'Tech 4', 'Tech 5'],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
-                    label: 'Active Jobs',
-                    backgroundColor: '#4e73df',
-                    data: [4, 3, 2, 5, 3]
+                    label: 'Job Orders',
+                    data: [65, 72, 78, 85, 82, 90, 88, 92, 85, 95, 98, 100],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Invoice Value (K KWD)',
+                    data: [45, 52, 58, 60, 58, 65, 62, 68, 63, 70, 72, 75],
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    fill: true,
+                    tension: 0.4
                 }]
             },
-            options: options
+            options: {
+                ...options,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f0f0f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
         });
     }
-    */
+    
+    // Technician Jobs Chart
+    const technicianCanvas = document.getElementById('technicianJobsChart');
+    if (technicianCanvas && technicianCanvas.getContext) {
+        try {
+            const technicianChart = new Chart(technicianCanvas, {
+                type: 'bar', // Changed from horizontalBar which is deprecated
+                data: {
+                    labels: ['Tech 1', 'Tech 2', 'Tech 3', 'Tech 4', 'Tech 5'],
+                    datasets: [{
+                        label: 'Active Jobs',
+                        backgroundColor: '#4e73df',
+                        data: [4, 3, 2, 5, 3]
+                    }]
+                },
+                options: {
+                    ...options,
+                    indexAxis: 'y', // This replaces the deprecated horizontalBar type
+                }
+            });
+        } catch (error) {
+            console.error("Error initializing technician chart:", error);
+        }
+    }
 }
