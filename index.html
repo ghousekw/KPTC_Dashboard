@@ -64,6 +64,7 @@
         body.rtl-layout {
             direction: rtl;
             text-align: right;
+            font-family: 'Tahoma', sans-serif;
         }
         
         body.rtl-layout .menu-item i {
@@ -94,13 +95,16 @@
         
         body.rtl-layout .filter-label i,
         body.rtl-layout .table-title i,
-        body.rtl-layout .stat-card-total i {
+        body.rtl-layout .stat-card-total i,
+        body.rtl-layout h3 i {
             margin-right: 0;
-            margin-left: 5px;
+            margin-left: 8px;
         }
         
         body.rtl-layout .filter-button i,
-        body.rtl-layout .footer-link i {
+        body.rtl-layout .footer-link i,
+        body.rtl-layout .stat-card a i,
+        body.rtl-layout .kpi-status i {
             margin-right: 0;
             margin-left: 8px;
         }
@@ -124,12 +128,30 @@
         body.rtl-layout .stat-card-header,
         body.rtl-layout .filter-title,
         body.rtl-layout .table-header,
-        body.rtl-layout .chart-header {
+        body.rtl-layout .chart-header,
+        body.rtl-layout .header-right {
             flex-direction: row-reverse;
         }
         
         body.rtl-layout .process-arrow i {
             transform: rotate(180deg);
+        }
+        
+        /* Pagination and table fixes */
+        body.rtl-layout .table-container > div {
+            flex-direction: row-reverse;
+        }
+        
+        body.rtl-layout th i,
+        body.rtl-layout td i {
+            margin-right: 0;
+            margin-left: 5px;
+        }
+        
+        body.rtl-layout .user-profile img,
+        body.rtl-layout .user-profile .placeholder-img {
+            margin-right: 0;
+            margin-left: 8px;
         }
         
         .container {

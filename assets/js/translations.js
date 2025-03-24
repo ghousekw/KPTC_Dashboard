@@ -246,6 +246,173 @@ const translations = {
     }, 
     'Settings': {
         ar: 'الإعدادات'
+    },
+    
+    // Additional translations for missing elements
+    'Showing 1 to 5 of 16 entries': {
+        ar: 'عرض 1 إلى 5 من 16 سجل'
+    },
+    'Previous': {
+        ar: 'السابق'
+    },
+    'Next': {
+        ar: 'التالي'
+    },
+    'TOYOTA': {
+        ar: 'تويوتا'
+    },
+    'GMC': {
+        ar: 'جي إم سي'
+    },
+    'KIA': {
+        ar: 'كيا'
+    },
+    'MOI SULABIYA MAIN': {
+        ar: 'وزارة الداخلية - الصليبية الرئيسي'
+    },
+    'MOI AHMADI': {
+        ar: 'وزارة الداخلية - الأحمدي'
+    },
+    'Job Orders Chart': {
+        ar: 'مخطط أوامر العمل'
+    },
+    'Repair Jobs Chart': {
+        ar: 'مخطط أعمال الإصلاح'
+    },
+    'Monthly Trends Chart': {
+        ar: 'مخطط الاتجاهات الشهرية'
+    },
+    'Scroll to see more': {
+        ar: 'مرر للمشاهدة المزيد'
+    },
+    'Create New Job Order': {
+        ar: 'إنشاء أمر عمل جديد'
+    },
+    'Pending Approvals': {
+        ar: 'الموافقات المعلقة'
+    },
+    'Requires your attention': {
+        ar: 'تتطلب اهتمامك'
+    },
+    'View all pending approvals': {
+        ar: 'عرض جميع الموافقات المعلقة'
+    },
+    'Maintenance Alerts': {
+        ar: 'تنبيهات الصيانة'
+    },
+    'Critical maintenance needed': {
+        ar: 'صيانة حرجة مطلوبة'
+    },
+    'View maintenance details': {
+        ar: 'عرض تفاصيل الصيانة'
+    },
+    'Generate Reports': {
+        ar: 'إنشاء التقارير'
+    },
+    'Download Reports': {
+        ar: 'تنزيل التقارير'
+    },
+    'Key Performance Indicators': {
+        ar: 'مؤشرات الأداء الرئيسية'
+    },
+    'Avg. Turnaround Time': {
+        ar: 'متوسط وقت الإنجاز'
+    },
+    'Days 2.3': {
+        ar: '2.3 يوم'
+    },
+    'Target: 3 Days': {
+        ar: 'الهدف: 3 أيام'
+    },
+    '0.7 Days Below Target': {
+        ar: '0.7 يوم أقل من الهدف'
+    },
+    'First-Time Fix Rate': {
+        ar: 'معدل الإصلاح من أول مرة'
+    },
+    '89%': {
+        ar: '89٪'
+    },
+    'Target: 90%': {
+        ar: 'الهدف: 90٪'
+    },
+    '1% Below Target': {
+        ar: '1٪ أقل من الهدف'
+    },
+    'Customer Satisfaction': {
+        ar: 'رضا العملاء'
+    },
+    '94%': {
+        ar: '94٪'
+    },
+    'Target: 85%': {
+        ar: 'الهدف: 85٪'
+    },
+    '9% Above Target': {
+        ar: '9٪ أعلى من الهدف'
+    },
+    'Labor Utilization': {
+        ar: 'استغلال العمالة'
+    },
+    '82%': {
+        ar: '82٪'
+    },
+    '3% Below Target': {
+        ar: '3٪ أقل من الهدف'
+    },
+    'View Details': {
+        ar: 'عرض التفاصيل'
+    },
+    'Edit Record': {
+        ar: 'تعديل السجل'
+    },
+    'Print Report': {
+        ar: 'طباعة التقرير'
+    },
+    'Download PDF': {
+        ar: 'تنزيل PDF'
+    },
+    'Share': {
+        ar: 'مشاركة'
+    },
+    'Delete': {
+        ar: 'حذف'
+    },
+    'Chevrolet': {
+        ar: 'شيفروليه'
+    },
+    'Nissan': {
+        ar: 'نيسان'
+    },
+    'Mitsubishi': {
+        ar: 'ميتسوبيشي'
+    },
+    'Showing': {
+        ar: 'عرض'
+    },
+    'entries': {
+        ar: 'سجل'
+    },
+    'to': {
+        ar: 'إلى'
+    },
+    'of': {
+        ar: 'من'
+    },
+    'Mike (Engine)': {
+        ar: 'مايك (محركات)'
+    },
+    'Sara (Electrical)': {
+        ar: 'سارة (كهربائية)'
+    },
+    'Raj (Brakes)': {
+        ar: 'راج (فرامل)'
+    },
+    'Carlos (Transmission)': {
+        ar: 'كارلوس (ناقل الحركة)'
+    },
+    'Ahmed (Body Work)': {
+        ar: 'أحمد (أعمال الهيكل)'
     }
 };
 

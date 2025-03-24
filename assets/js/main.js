@@ -127,6 +127,19 @@ document.addEventListener('DOMContentLoaded', function() {
         translateTableHeaders(lang);
         translateFilterSection(lang);
         translateFooter(lang);
+        
+        // Additional translation functions for previously missed elements
+        translateAllHeadings(lang);
+        translateChartTitles(lang);
+        translateHeaderElements(lang);
+        translateStatusElements(lang);
+        translateAllSpans(lang);
+        translateProcessFlow(lang);
+        translateTableActions(lang);
+        translateButtonsAndLinks(lang);
+        
+        // Force translation of any remaining text
+        translateMobileScrollHint(lang);
     }
     
     // Helper functions to translate specific sections
@@ -233,6 +246,182 @@ document.addEventListener('DOMContentLoaded', function() {
                 const text = el.textContent.replace(iconEl.textContent, '').trim();
                 const translatedText = getTranslation(text, lang);
                 el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            }
+        });
+    }
+    
+    // New translation functions for additional elements
+    function translateAllHeadings(lang) {
+        // Translate all headings (h1-h6)
+        document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                const translatedText = getTranslation(text, lang);
+                el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            } else {
+                el.textContent = getTranslation(el.textContent, lang);
+            }
+        });
+        
+        // Translate KPI titles
+        document.querySelectorAll('.kpi-title, .kpi-target').forEach(el => {
+            el.textContent = getTranslation(el.textContent, lang);
+        });
+        
+        document.querySelectorAll('.kpi-status').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                const translatedText = getTranslation(text, lang);
+                el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            } else {
+                el.textContent = getTranslation(el.textContent, lang);
+            }
+        });
+    }
+    
+    function translateChartTitles(lang) {
+        // Chart titles
+        document.querySelectorAll('.chart-title').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                const translatedText = getTranslation(text, lang);
+                el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            } else {
+                el.textContent = getTranslation(el.textContent, lang);
+            }
+        });
+        
+        // Chart placeholders
+        document.querySelectorAll('.placeholder-img.chart p').forEach(el => {
+            el.textContent = getTranslation(el.textContent, lang);
+        });
+    }
+    
+    function translateHeaderElements(lang) {
+        // Header title
+        const headerTitle = document.querySelector('.header-left h1');
+        if (headerTitle) {
+            const iconEl = headerTitle.querySelector('i');
+            if (iconEl) {
+                const text = headerTitle.textContent.replace(iconEl.textContent, '').trim();
+                const translatedText = getTranslation(text, lang);
+                headerTitle.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            }
+        }
+        
+        // User profile name
+        const userProfileName = document.querySelector('.user-profile span');
+        if (userProfileName) {
+            userProfileName.textContent = getTranslation(userProfileName.textContent, lang);
+        }
+    }
+    
+    function translateStatusElements(lang) {
+        // Translate all status indicators
+        document.querySelectorAll('[class*="status-"]').forEach(el => {
+            if (!el.classList.contains('status-badge')) {
+                const iconEl = el.querySelector('i');
+                if (iconEl) {
+                    const text = el.textContent.replace(iconEl.textContent, '').trim();
+                    if (text) {
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    }
+                } else if (el.textContent.trim()) {
+                    el.textContent = getTranslation(el.textContent.trim(), lang);
+                }
+            }
+        });
+    }
+    
+    function translateAllSpans(lang) {
+        // Translate various span elements containing text
+        document.querySelectorAll('span:not(.badge)').forEach(el => {
+            // Skip already translated or empty spans
+            if (el.textContent.trim() && 
+                !el.closest('.menu-item') && 
+                !el.closest('.language-selector') && 
+                !el.closest('.user-profile') &&
+                !el.parentElement.classList.contains('status-badge')) {
+                
+                el.textContent = getTranslation(el.textContent.trim(), lang);
+            }
+        });
+    }
+    
+    function translateProcessFlow(lang) {
+        // Process flow elements
+        document.querySelectorAll('.process-title').forEach(el => {
+            el.textContent = getTranslation(el.textContent, lang);
+        });
+        
+        document.querySelectorAll('.process-subtitle').forEach(el => {
+            el.textContent = getTranslation(el.textContent, lang);
+        });
+    }
+    
+    function translateTableActions(lang) {
+        // Table action buttons titles
+        document.querySelectorAll('.table-button, .action-button').forEach(el => {
+            if (el.title) {
+                el.title = getTranslation(el.title, lang);
+            }
+        });
+    }
+    
+    function translateButtonsAndLinks(lang) {
+        // Translate all buttons with text
+        document.querySelectorAll('button:not(.filter-button):not(.table-button):not(.action-button)').forEach(el => {
+            if (el.textContent.trim()) {
+                const iconEl = el.querySelector('i');
+                if (iconEl) {
+                    const text = el.textContent.replace(iconEl.textContent, '').trim();
+                    if (text) {
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    }
+                } else {
+                    el.textContent = getTranslation(el.textContent.trim(), lang);
+                }
+            }
+        });
+        
+        // Translate all anchor links with text
+        document.querySelectorAll('a:not(.footer-link)').forEach(el => {
+            if (el.textContent.trim()) {
+                const iconEl = el.querySelector('i');
+                if (iconEl) {
+                    const text = el.textContent.replace(iconEl.textContent, '').trim();
+                    if (text) {
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    }
+                } else {
+                    el.textContent = getTranslation(el.textContent.trim(), lang);
+                }
+            }
+        });
+    }
+    
+    function translateMobileScrollHint(lang) {
+        // Mobile scroll hint
+        const scrollHint = document.querySelector('.mobile-scroll-hint');
+        if (scrollHint) {
+            const iconEl = scrollHint.querySelector('i');
+            if (iconEl) {
+                const text = scrollHint.textContent.replace(iconEl.textContent, '').trim();
+                const translatedText = getTranslation(text, lang);
+                scrollHint.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+            }
+        }
+        
+        // Pagination text
+        document.querySelectorAll('.table-container > div').forEach(el => {
+            if (el.textContent.includes('Showing')) {
+                el.textContent = getTranslation(el.textContent.trim(), lang);
             }
         });
     }
