@@ -413,6 +413,171 @@ const translations = {
     },
     'Ahmed (Body Work)': {
         ar: 'أحمد (أعمال الهيكل)'
+    },
+    
+    // New translations for bottom elements
+    'Quick Access Shortcuts': {
+        ar: 'اختصارات الوصول السريع'
+    },
+    'Inventory': {
+        ar: 'المخزون'
+    },
+    'Job Orders': {
+        ar: 'أوامر العمل'
+    },
+    'Invoices': {
+        ar: 'الفواتير'
+    },
+    'Technicians': {
+        ar: 'الفنيين'
+    },
+    'Search': {
+        ar: 'بحث'
+    },
+    'New': {
+        ar: 'جديد'
+    },
+    'Completed Jobs': {
+        ar: 'الأعمال المكتملة'
+    },
+    'In Progress': {
+        ar: 'قيد التنفيذ'
+    },
+    'Pending': {
+        ar: 'معلق'
+    },
+    'Cancelled': {
+        ar: 'ملغي'
+    },
+    'Engine': {
+        ar: 'محرك'
+    },
+    'Transmission': {
+        ar: 'ناقل الحركة'
+    },
+    'Brakes': {
+        ar: 'فرامل'
+    },
+    'Electrical': {
+        ar: 'كهربائي'
+    },
+    'Body Work': {
+        ar: 'أعمال الهيكل'
+    },
+    'Other': {
+        ar: 'أخرى'
+    },
+    'Target Met': {
+        ar: 'تم تحقيق الهدف'
+    },
+    'Target': {
+        ar: 'الهدف'
+    },
+    'Current': {
+        ar: 'الحالي'
+    },
+    'Create': {
+        ar: 'إنشاء'
+    },
+    'View': {
+        ar: 'عرض'
+    },
+    'Waiting Parts': {
+        ar: 'في انتظار القطع'
+    },
+    'Ready for QC': {
+        ar: 'جاهز لفحص الجودة'
+    },
+    'Jan': {
+        ar: 'يناير'
+    },
+    'Feb': {
+        ar: 'فبراير'
+    },
+    'Mar': {
+        ar: 'مارس'
+    },
+    'Apr': {
+        ar: 'أبريل'
+    },
+    'May': {
+        ar: 'مايو'
+    },
+    'Jun': {
+        ar: 'يونيو'
+    },
+    'Jul': {
+        ar: 'يوليو'
+    },
+    'Aug': {
+        ar: 'أغسطس'
+    },
+    'Sep': {
+        ar: 'سبتمبر'
+    },
+    'Oct': {
+        ar: 'أكتوبر'
+    },
+    'Nov': {
+        ar: 'نوفمبر'
+    },
+    'Dec': {
+        ar: 'ديسمبر'
+    },
+    // Final additions for remaining untranslated elements
+    'Quick Access': {
+        ar: 'الوصول السريع'
+    },
+    'Recent Activities': {
+        ar: 'الأنشطة الأخيرة'
+    },
+    'Back to List': {
+        ar: 'العودة للقائمة'
+    },
+    'Add New': {
+        ar: 'إضافة جديد'
+    },
+    'Apply': {
+        ar: 'تطبيق'
+    },
+    'Cancel': {
+        ar: 'إلغاء'
+    },
+    'Save': {
+        ar: 'حفظ'
+    },
+    'Update': {
+        ar: 'تحديث'
+    },
+    'More': {
+        ar: 'المزيد'
+    },
+    'Options': {
+        ar: 'خيارات'
+    },
+    'Submit': {
+        ar: 'إرسال'
+    },
+    'Approve': {
+        ar: 'موافقة'
+    },
+    'Reject': {
+        ar: 'رفض'
+    },
+    'Loading...': {
+        ar: 'جاري التحميل...'
+    },
+    'No records found': {
+        ar: 'لم يتم العثور على سجلات'
+    },
+    'Please wait...': {
+        ar: 'يرجى الانتظار...'
+    },
+    'Last updated': {
+        ar: 'آخر تحديث'
+    },
+    'Report Generated on': {
+        ar: 'تم إنشاء التقرير في'
     }
 };
 

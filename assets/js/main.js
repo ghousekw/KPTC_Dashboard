@@ -140,6 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Force translation of any remaining text
         translateMobileScrollHint(lang);
+        
+        // Translate bottom sections
+        translateQuickAccessShortcuts(lang);
+        translateKPIElements(lang);
+        translateBottomButtons(lang);
+        translateMonthNames(lang);
     }
     
     // Helper functions to translate specific sections
@@ -423,6 +429,112 @@ document.addEventListener('DOMContentLoaded', function() {
             if (el.textContent.includes('Showing')) {
                 el.textContent = getTranslation(el.textContent.trim(), lang);
             }
+        });
+    }
+    
+    // New functions to handle bottom elements
+    function translateQuickAccessShortcuts(lang) {
+        // Translate quick access shortcuts section
+        const shortcutsTitle = document.querySelector('.shortcuts-title');
+        if (shortcutsTitle) {
+            shortcutsTitle.textContent = getTranslation(shortcutsTitle.textContent.trim(), lang);
+        }
+        
+        // Translate each shortcut
+        document.querySelectorAll('.shortcut-item h3, .shortcut-item p').forEach(el => {
+            el.textContent = getTranslation(el.textContent.trim(), lang);
+        });
+        
+        // Translate action buttons in shortcuts
+        document.querySelectorAll('.shortcut-item button, .shortcut-item .btn').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                if (text) {
+                    const translatedText = getTranslation(text, lang);
+                    el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                }
+            } else if (el.textContent.trim()) {
+                el.textContent = getTranslation(el.textContent.trim(), lang);
+            }
+        });
+    }
+    
+    function translateKPIElements(lang) {
+        // Translate KPI section title
+        const kpiSectionTitle = document.querySelector('.kpi-section-title');
+        if (kpiSectionTitle) {
+            kpiSectionTitle.textContent = getTranslation(kpiSectionTitle.textContent.trim(), lang);
+        }
+        
+        // Translate KPI card titles
+        document.querySelectorAll('.kpi-card-title').forEach(el => {
+            el.textContent = getTranslation(el.textContent.trim(), lang);
+        });
+        
+        // Translate KPI values and percentages
+        document.querySelectorAll('.kpi-value, .kpi-percentage').forEach(el => {
+            if (el.textContent.includes('%')) {
+                // Extract percentage and translate
+                const percentage = el.textContent.trim();
+                el.textContent = getTranslation(percentage, lang);
+            } else if (el.textContent.includes('Days')) {
+                // Extract days text and translate
+                const daysText = el.textContent.trim();
+                el.textContent = getTranslation(daysText, lang);
+            }
+        });
+        
+        // Translate KPI targets and comparisons
+        document.querySelectorAll('.kpi-target, .kpi-comparison').forEach(el => {
+            el.textContent = getTranslation(el.textContent.trim(), lang);
+        });
+        
+        // Translate KPI status indicators
+        document.querySelectorAll('.kpi-status').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                if (text) {
+                    const translatedText = getTranslation(text, lang);
+                    el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                }
+            } else if (el.textContent.trim()) {
+                el.textContent = getTranslation(el.textContent.trim(), lang);
+            }
+        });
+    }
+    
+    function translateBottomButtons(lang) {
+        // Translate bottom action buttons
+        document.querySelectorAll('.action-btn, .report-btn, .create-btn').forEach(el => {
+            const iconEl = el.querySelector('i');
+            if (iconEl) {
+                const text = el.textContent.replace(iconEl.textContent, '').trim();
+                if (text) {
+                    const translatedText = getTranslation(text, lang);
+                    el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                }
+            } else if (el.textContent.trim()) {
+                el.textContent = getTranslation(el.textContent.trim(), lang);
+            }
+        });
+        
+        // Translate button descriptions
+        document.querySelectorAll('.btn-desc, .btn-subtitle').forEach(el => {
+            el.textContent = getTranslation(el.textContent.trim(), lang);
+        });
+    }
+    
+    function translateMonthNames(lang) {
+        // Translate month names in charts and date selectors
+        document.querySelectorAll('.chart-axis-label, .date-label').forEach(el => {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            months.forEach(month => {
+                if (el.textContent.includes(month)) {
+                    el.textContent = el.textContent.replace(month, getTranslation(month, lang));
+                }
+            });
         });
     }
 }); 
