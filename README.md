@@ -21,15 +21,17 @@ A modern and responsive dashboard for KPTC (Kuwait Public Transportation Company
 ```
 dashboard/
 ├── assets/
-│   ├── css/
-│   │   └── styles.css     # Main stylesheet
 │   ├── images/
-│   │   ├── kptc-logo.png  # Company logo
-│   │   └── placeholder/   # SVG placeholders for content
+│   │   ├── kptc-logo.png       # Company logo
+│   │   ├── kptc-logo-new.png   # Updated company logo
+│   │   ├── backup/             # Backup images
+│   │   └── placeholder/        # SVG placeholders for content
+│   │       ├── chart-500x300.svg
+│   │       ├── logo-placeholder.svg
+│   │       └── profile-40x40.svg
 │   └── js/
-│       ├── charts.js      # Chart rendering logic
-│       └── main.js        # UI interaction logic
-└── index.html             # Main dashboard page
+│       └── charts.js          # Chart rendering logic
+└── index.html                 # Main dashboard page with embedded CSS and UI logic
 ```
 
 ## Getting Started
@@ -46,12 +48,13 @@ python -m http.server 8000
 
 ## Development
 
-- **CSS**: All styles are in `assets/css/styles.css`
-- **JavaScript**: UI logic in `main.js`, chart logic in `charts.js`
-- **Charts**: Using Chart.js library with fallback placeholders
+- **CSS**: Currently embedded in `index.html`
+- **JavaScript**: Chart logic in `assets/js/charts.js`, UI logic embedded in `index.html`
+- **Charts**: Using Chart.js library with SVG fallback placeholders
 
 ## Maintenance
 
 - Keep dashboard statistics updated with real data sources
-- Ensure placeholder images work correctly
-- Monitor for 404 errors and fix any missing resources 
+- Ensure placeholder SVG images work correctly when APIs are unavailable
+- Monitor for 404 errors and fix any missing resources by using local placeholder SVGs
+- Update mobile menu and sidebar overlay for proper responsive behavior 
