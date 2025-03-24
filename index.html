@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <!-- Main script and charts script -->
+    <script src="assets/js/translations.js" defer></script>
     <script src="assets/js/main.js" defer></script>
     <script src="assets/js/charts.js" defer></script>
     <!-- Preload logo image to improve loading -->
@@ -57,6 +58,78 @@
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.5;
+        }
+        
+        /* RTL specific styles */
+        body.rtl-layout {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        body.rtl-layout .menu-item i {
+            margin-right: 0;
+            margin-left: 12px;
+        }
+        
+        body.rtl-layout .menu-item span {
+            font-family: 'Tahoma', sans-serif;
+        }
+        
+        body.rtl-layout .header-left h1 {
+            font-family: 'Tahoma', sans-serif;
+        }
+        
+        body.rtl-layout .stat-card-title,
+        body.rtl-layout .filter-title,
+        body.rtl-layout .table-title,
+        body.rtl-layout .chart-title,
+        body.rtl-layout .footer {
+            font-family: 'Tahoma', sans-serif;
+        }
+        
+        body.rtl-layout .submenu {
+            padding-left: 0;
+            padding-right: 20px;
+        }
+        
+        body.rtl-layout .filter-label i,
+        body.rtl-layout .table-title i,
+        body.rtl-layout .stat-card-total i {
+            margin-right: 0;
+            margin-left: 5px;
+        }
+        
+        body.rtl-layout .filter-button i,
+        body.rtl-layout .footer-link i {
+            margin-right: 0;
+            margin-left: 8px;
+        }
+        
+        body.rtl-layout .mobile-menu-btn {
+            left: auto;
+            right: 15px;
+        }
+        
+        body.rtl-layout .sidebar {
+            left: auto;
+            right: -100%;
+        }
+        
+        body.rtl-layout .sidebar.active {
+            left: auto;
+            right: 0;
+        }
+        
+        /* Fix alignment for RTL */
+        body.rtl-layout .stat-card-header,
+        body.rtl-layout .filter-title,
+        body.rtl-layout .table-header,
+        body.rtl-layout .chart-header {
+            flex-direction: row-reverse;
+        }
+        
+        body.rtl-layout .process-arrow i {
+            transform: rotate(180deg);
         }
         
         .container {
