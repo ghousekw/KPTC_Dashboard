@@ -341,6 +341,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+        
+        // Specifically target the status card sections that are visible in the screenshots
+        const statusTexts = ['In Repair', 'Awaiting QC', 'Ready for Delivery', 'Parts Pending'];
+        const statusDescriptions = ['Active repair jobs', 'Pending quality checks', 'Completed and ready', 'Waiting for parts'];
+        
+        // Process each status card title
+        document.querySelectorAll('.stat-card-title').forEach(el => {
+            // Skip processing if no text content
+            if (!el.textContent.trim()) return;
+            
+            // For each known status text, check if this element contains it
+            statusTexts.forEach(status => {
+                if (el.textContent.includes(status)) {
+                    const iconEl = el.querySelector('i');
+                    if (iconEl) {
+                        const text = el.textContent.replace(iconEl.textContent, '').trim();
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    } else {
+                        el.textContent = getTranslation(el.textContent.trim(), lang);
+                    }
+                }
+            });
+        });
+        
+        // Process each status description
+        document.querySelectorAll('.stat-card-total').forEach(el => {
+            // Skip processing if no text content
+            if (!el.textContent.trim()) return;
+            
+            // For each known description, check if this element contains it
+            statusDescriptions.forEach(desc => {
+                if (el.textContent.includes(desc)) {
+                    const iconEl = el.querySelector('i');
+                    if (iconEl) {
+                        const text = el.textContent.replace(iconEl.textContent, '').trim();
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    } else {
+                        el.textContent = getTranslation(el.textContent.trim(), lang);
+                    }
+                }
+            });
+        });
     }
     
     function translateAllSpans(lang) {
@@ -523,6 +567,93 @@ document.addEventListener('DOMContentLoaded', function() {
         // Translate button descriptions
         document.querySelectorAll('.btn-desc, .btn-subtitle').forEach(el => {
             el.textContent = getTranslation(el.textContent.trim(), lang);
+        });
+        
+        // Specifically handle quick access cards visible in the screenshots
+        const quickAccessTitles = ['Generate Reports', 'Maintenance Alerts', 'Pending Approvals', 'Create New Job Order'];
+        const quickAccessDescriptions = [
+            'Download Reports', 
+            'Critical maintenance needed', 
+            'Requires your attention', 
+            'Create New Job Order'
+        ];
+        const quickAccessLinks = [
+            'View maintenance details',
+            'View all pending approvals'
+        ];
+        
+        // Process each quick access card title
+        document.querySelectorAll('.stat-card-title').forEach(el => {
+            // Skip processing if no text content
+            if (!el.textContent.trim()) return;
+            
+            // For each known title, check if this element contains it
+            quickAccessTitles.forEach(title => {
+                if (el.textContent.includes(title)) {
+                    const iconEl = el.querySelector('i');
+                    if (iconEl) {
+                        const text = el.textContent.replace(iconEl.textContent, '').trim();
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    } else {
+                        el.textContent = getTranslation(el.textContent.trim(), lang);
+                    }
+                }
+            });
+        });
+        
+        // Process each quick access description
+        document.querySelectorAll('.stat-card-total').forEach(el => {
+            // Skip processing if no text content
+            if (!el.textContent.trim()) return;
+            
+            // For each known description, check if this element contains it
+            quickAccessDescriptions.forEach(desc => {
+                if (el.textContent.includes(desc)) {
+                    const iconEl = el.querySelector('i');
+                    if (iconEl) {
+                        const text = el.textContent.replace(iconEl.textContent, '').trim();
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    } else {
+                        el.textContent = getTranslation(el.textContent.trim(), lang);
+                    }
+                }
+            });
+        });
+        
+        // Process each quick access link
+        document.querySelectorAll('a').forEach(el => {
+            // Skip processing if no text content
+            if (!el.textContent.trim()) return;
+            
+            // For each known link text, check if this element contains it
+            quickAccessLinks.forEach(link => {
+                if (el.textContent.includes(link)) {
+                    const iconEl = el.querySelector('i');
+                    if (iconEl) {
+                        const text = el.textContent.replace(iconEl.textContent, '').trim();
+                        const translatedText = getTranslation(text, lang);
+                        el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                    } else {
+                        el.textContent = getTranslation(el.textContent.trim(), lang);
+                    }
+                }
+            });
+        });
+        
+        // Handle quick access buttons specifically by content
+        document.querySelectorAll('.filter-button').forEach(el => {
+            if (el.textContent.includes('Download Reports') || el.textContent.includes('Create New Job Order')) {
+                const iconEl = el.querySelector('i');
+                if (iconEl) {
+                    const text = el.textContent.replace(iconEl.textContent, '').trim();
+                    const translatedText = getTranslation(text, lang);
+                    el.innerHTML = iconEl.outerHTML + ' ' + translatedText;
+                } else {
+                    el.textContent = getTranslation(el.textContent.trim(), lang);
+                }
+            }
         });
     }
     

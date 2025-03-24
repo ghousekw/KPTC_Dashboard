@@ -578,6 +578,73 @@ const translations = {
     },
     'Report Generated on': {
         ar: 'تم إنشاء التقرير في'
+    },
+    
+    // Specific translations for status cards
+    'in waiting for parts': {
+        ar: 'في انتظار قطع الغيار'
+    },
+    'active repair jobs': {
+        ar: 'أعمال الإصلاح النشطة'
+    },
+    'pending quality checks': {
+        ar: 'فحوصات الجودة المعلقة'
+    },
+    'completed and ready': {
+        ar: 'مكتمل وجاهز'
+    },
+    'Detailed Status Breakdown': {
+        ar: 'تفصيل الحالة المفصلة'
+    },
+    'View maintenance details': {
+        ar: 'عرض تفاصيل الصيانة'
+    },
+    'View all pending approvals': {
+        ar: 'عرض جميع الموافقات المعلقة'
+    },
+    'Create New Job Order': {
+        ar: 'إنشاء أمر عمل جديد'
+    },
+    // Final exact translations from the screenshots
+    'Waiting for parts': {
+        ar: 'في انتظار قطع الغيار'
+    },
+    'Active repair jobs': {
+        ar: 'أعمال الإصلاح النشطة'
+    },
+    'Pending quality checks': {
+        ar: 'فحوصات الجودة المعلقة'
+    },
+    'Completed and ready': {
+        ar: 'مكتمل وجاهز'
+    },
+    'Critical maintenance needed': {
+        ar: 'صيانة حرجة مطلوبة'
+    },
+    'Requires your attention': {
+        ar: 'تتطلب اهتمامك'
+    },
+    'Download Reports': {
+        ar: 'تنزيل التقارير'
+    },
+    'Create a new job order': {
+        ar: 'إنشاء أمر عمل جديد'
+    },
+    // Add numeric value descriptions
+    '2': {
+        ar: '2'
+    },
+    '3': {
+        ar: '3'
+    },
+    '4': {
+        ar: '4'
+    },
+    '7': {
+        ar: '7'
+    },
+    '8': {
+        ar: '8'
     }
 };
 
