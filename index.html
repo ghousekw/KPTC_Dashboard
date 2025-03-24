@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPTC Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Preload logo image to improve loading -->
+    <link rel="preload" href="assets/images/kptc-logo.png" as="image">
+    <style>
+        :root {
+            --primary: #223b73;
+            --primary-light: #2c4b94;
+            --primary-dark: #1a2e5c;
+            --secondary: #e63946;
+            --light-bg: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.07);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.08);
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 15px 0 30px;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            position: sticky;
+            top: 0;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #f8f9fa, white);
+            border-bottom: 2px solid rgba(34, 59, 115, 0.1);
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            text-align: center;
+        }
+        
+        .brand::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), transparent);
+        }
+        
+        .brand .logo-container {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .brand img {
+            max-width: 160px;
+            height: auto;
+            object-fit: contain;
+            max-height: 60px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .brand img:hover {
+            transform: scale(1.02);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+        }
+        
+        .brand .svg-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .brand .svg-fallback svg {
+            height: 50px;
+            width: auto;
+            margin: 0 auto;
+        }
+        
+        /* Hide SVG fallback when image loads successfully */
+        .brand img:not([style*="display: none"]) ~ .svg-fallback {
+            display: none;
+        }
+        
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .menu-item {
+            margin: 4px 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all var(--transition-normal) ease-out;
+            border-radius: 8px;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-item:hover i {
+            transform: scale(1.2);
+        }
+        
+        .menu-item span {
+            font-size: 14px;
+        }
+        
+        .submenu {
+            padding-left: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .submenu.open {
+            max-height: 500px;
+        }
+        
+        .submenu .menu-item {
+            padding: 10px 15px 10px 35px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 25px;
+            max-width: 1600px;
+            margin: 0 auto;
+            overflow-y: auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 18px 25px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-left h1 {
+            font-size: 26px;
+            font-weight: 600;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .language-selector, .user-profile, .notifications {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .language-selector:hover, .user-profile:hover, .notifications:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .notifications {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notifications .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        
+        .language-selector {
+            padding: 8px 15px;
+            gap: 8px;
+            background-color: var(--light-bg);
+            border-radius: 20px;
+        }
+        
+        .language-selector i {
+            color: var(--primary);
+        }
+        
+        .user-profile {
+            gap: 12px;
+            padding: 5px 15px 5px 5px;
+        }
+        
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--light-bg);
+        }
+        
+        .user-profile span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .user-profile i {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-normal) ease-out;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card-title {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .stat-card-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-card-icon {
+            transform: rotate(15deg);
+        }
+        
+        .stat-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card-total {
+            font-size: 14px;
+            color: #888;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-card-total i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+        
+        .stat-card.primary .stat-card-icon {
+            background-color: var(--primary);
+        }
+        
+        .stat-card.success .stat-card-icon {
+            background-color: var(--success);
+        }
+        
+        .stat-card.warning .stat-card-icon {
+            background-color: var(--warning);
+        }
+        
+        .stat-card.danger .stat-card-icon {
+            background-color: var(--secondary);
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: linear-gradient(to right, #fff, #fcfcfc);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal) ease-out;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-title i {
+            margin-right: 10px;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-label i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+        
+        .filter-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+        
+        .filter-button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+        
+        .filter-button i {
+            margin-right: 8px;
+        }
+        
+        .filter-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .filter-button.secondary {
+            background-color: #6c757d;
+        }
+        
+        .filter-button.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        /* Table */
+        .table-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        
+        .mobile-scroll-hint {
+            display: none;
+            text-align: center;
+            padding: 8px;
+            margin-bottom: 10px;
+            color: #666;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .mobile-scroll-hint i {
+            margin-right: 5px;
+            animation: scroll-hint 1.5s infinite;
+        }
+        
+        @keyframes scroll-hint {
+            0% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            100% { transform: translateX(-3px); }
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .table-title i {
+            margin-right: 10px;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .table-button {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all var(--transition-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+        }
+        
+        .table-button:hover {
+            transform: scale(1.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th {
+            position: sticky;
+            top: 0;
+            background-color: rgba(34, 59, 115, 0.03);
+            z-index: 10;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid rgba(34, 59, 115, 0.1);
+        }
+        
+        th i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+        
+        td {
+            padding: 14px 15px;
+            vertical-align: middle;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(248, 249, 250, 0.5);
+        }
+        
+        tr:hover {
+            background-color: rgba(34, 59, 115, 0.05);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .status-badge i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        .status-estimation {
+            background-color: #e6f7ff;
+            color: #0070d1;
+        }
+        
+        .status-warranty {
+            background-color: #fff0f6;
+            color: #eb2f96;
+        }
+        
+        .status-inspection {
+            background-color: #fffbe6;
+            color: #faad14;
+        }
+        
+        .status-washing {
+            background-color: #f0f5ff;
+            color: #2f54eb;
+        }
+        
+        .status-qc {
+            background-color: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .status-submitted {
+            background-color: #e6fffb;
+            color: #13c2c2;
+        }
+        
+        .status-requested {
+            background-color: #f9f0ff;
+            color: #722ed1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast) ease;
+            color: #666;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+        
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-action {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #666;
+            background-color: #f0f0f0;
+        }
+        
+        .chart-action:hover {
+            background-color: #e0e0e0;
+            color: var(--primary);
+        }
+        
+        .chart {
+            height: 320px;
+            padding: 10px;
+            background-color: #fcfcfc;
+            border-radius: 8px;
+        }
+        
+        /* Process Flow Styles */
+        .process-flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background-color: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+        
+        .process-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 100px;
+            padding: 15px 10px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .process-stage:hover {
+            background-color: rgba(34, 59, 115, 0.05);
+            transform: translateY(-5px);
+        }
+        
+        .process-icon {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            color: var(--primary);
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .process-stage:hover .process-icon {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+        
+        .process-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .process-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .process-subtitle {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .process-arrow {
+            color: #adb5bd;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+        }
+        
+        @media (max-width: 992px) {
+            .process-flow-container {
+                justify-content: flex-start;
+                padding: 20px 15px;
+                overflow-x: auto;
+            }
+            
+            .process-stage {
+                min-width: 90px;
+                padding: 10px 5px;
+            }
+            
+            .process-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .process-title {
+                font-size: 13px;
+            }
+            
+            .process-subtitle {
+                font-size: 11px;
+            }
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .footer-link {
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .footer-link:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .footer-link i {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .footer-link:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* Mobile Menu Button - Hidden by Default */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            border: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-menu-btn i {
+            font-size: 20px;
+        }
+
+        /* Sidebar Overlay - Hidden by Default */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 250px;
+                transition: all 0.3s ease-in-out;
+                z-index: 1000;
+                height: 100%;
+                overflow-y: auto;
+            }
+
+            .sidebar.active {
+                left: 0;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+            
+            .main-content {
+                padding: 15px;
+                padding-top: 60px; /* Space for the mobile menu button */
+            }
+            
+            /* Mobile header fixes */
+            .header {
+                flex-direction: column;
+                padding: 15px;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            
+            .header-left {
+                margin-bottom: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header-right {
+                width: 100%;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .header-left h1 {
+                font-size: 18px;
+                margin-left: 0;
+                text-align: center;
+            }
+            
+            .language-selector span {
+                display: none;
+            }
+            
+            .language-selector {
+                padding: 8px;
+            }
+            
+            .user-profile span {
+                display: none;
+            }
+            
+            .user-profile {
+                padding: 0;
+            }
+
+            /* Layout grid fixes */
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Footer fixes */
+            .footer-links {
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+            }
+            
+            /* Action buttons */
+            .action-button {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .filter-button {
+                padding: 10px 16px;
+            }
+
+            /* Fix table scrolling on mobile */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .mobile-scroll-hint {
+                display: block;
+            }
+            
+            table {
+                min-width: 650px;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+            }
+            
+            /* Make charts mobile friendly */
+            .chart {
+                height: 250px;
+            }
+            
+            .chart-container {
+                padding: 15px 10px;
+                margin-bottom: 15px;
+            }
+            
+            .chart-title {
+                font-size: 15px;
+                line-height: 1.3;
+            }
+            
+            /* Make cards more compact */
+            .stat-card {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .stat-card-value {
+                font-size: 22px;
+            }
+            
+            .stat-card-title {
+                font-size: 14px;
+            }
+            
+            /* Add scroll hint for tables */
+            .table-container::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 20px;
+                background: linear-gradient(to right, transparent, rgba(255,255,255,0.7));
+                pointer-events: none;
+                z-index: 5;
+                display: block;
+            }
+
+            /* Improve mobile process flow */
+            .process-flow-container {
+                padding: 15px 10px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .process-stage {
+                min-width: 85px;
+                padding: 10px 5px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            transition: all var(--transition-normal) ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+            opacity: 0;
+            transition: all var(--transition-normal) ease-out;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card:hover .stat-card-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .filter-button {
+            transition: all var(--transition-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .filter-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255,255,255,0.5);
+            opacity: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .filter-button:hover::after {
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+        }
+
+        .stat-card-title {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stat-card a {
+            transition: all var(--transition-normal) ease-out;
+        }
+
+        .stat-card a:hover {
+            padding-left: 5px;
+        }
+
+        .stat-card a:hover i {
+            transform: translateX(5px);
+        }
+
+        .stat-card a i {
+            transition: transform 0.3s ease;
+        }
+
+        .image-loader {
+            position: relative;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .image-loader::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { left: -100% }
+            100% { left: 200% }
+        }
+
+        .brand img, .user-profile img, .chart img {
+            transition: opacity 0.3s ease;
+        }
+
+        .brand img.loading, .user-profile img.loading, .chart img.loading {
+            opacity: 0.5;
+        }
+
+        .chart {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chart-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            display: none;
+        }
+
+        .chart-error i {
+            font-size: 48px;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        /* Fallback logo style */
+        .fallback-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+            width: 100%;
+            height: 60px;
+        }
+        
+        .fallback-logo-svg {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fallback-logo-svg svg {
+            height: 50px;
+            width: auto;
+        }
+
+        /* KPI Styles */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .kpi-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .kpi-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .gauge-container {
+            position: relative;
+            width: 150px;
+            height: 100px;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-target {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .kpi-status.good {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+        }
+        
+        .kpi-status.warning {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: #d35400;
+        }
+        
+        .kpi-status.bad {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+        }
+        
+        .kpi-status i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        /* Placeholder class for replacing missing images */
+        .placeholder-img {
+            background-color: #f2f2f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 4px;
+        }
+        
+        .placeholder-img.profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .placeholder-img.chart {
+            width: 100%;
+            height: 250px;
+        }
+        
+        .placeholder-img.chart div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .placeholder-img.chart i {
+            font-size: 32px;
+            color: #aaa;
+        }
+        
+        .placeholder-img.chart p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+    <!-- Custom Charts Script -->
+    <script src="assets/js/charts.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" style="display: flex !important; z-index: 9999; position: fixed; top: 10px; left: 10px; background-color: #223b73; color: white; border: none; border-radius: 4px; padding: 8px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <div class="logo-container">
+                    <img src="assets/images/kptc-logo-new.png" alt="KPTC Logo" 
+                         onerror="this.onerror=null; this.src='assets/images/kptc-logo.png'; this.onerror=function(){this.style.display='none'; document.querySelector('.svg-fallback').style.display='flex';};">
+                    <div class="svg-fallback">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60">
+                            <text x="10" y="40" fill="#223b73" font-size="40" font-weight="bold" font-family="Arial, sans-serif">KPTC</text>
+                            <circle cx="140" cy="20" r="10" fill="#e63946"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard & Reports</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-file-lines"></i>
+                <span>MOI Reception</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-user-tie"></i>
+                <span>KPTC Reception</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-wrench"></i>
+                <span>Garage</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-cart-plus"></i>
+                <span>Procurement</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-money-check-alt"></i>
+                <span>Accounts</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-warehouse"></i>
+                <span>Stores</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-sliders"></i>
+                <span>Master</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-life-ring"></i>
+                <span>Help File</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1><i class="fas fa-gauge"></i> Dashboard & Reports</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="language-selector">
+                        <i class="fas fa-globe"></i>
+                        <span>Arabic</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="placeholder-img profile">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card primary">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Job Order Total</div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">16</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-chart-line"></i>
+                        All active job orders
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Job Order Completed</div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">0</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-calendar-check"></i>
+                        Finished job orders
+                    </div>
+                </div>
+                
+                <div class="stat-card warning">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Job Order In Progress</div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-gears"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">16</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-wrench"></i>
+                        Currently processing
+                    </div>
+                </div>
+                
+                <div class="stat-card danger">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Job Order On Hold</div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">0</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-clock"></i>
+                        Temporarily stopped
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <h3 class="filter-title"><i class="fas fa-filter"></i> Filter Options</h3>
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-calendar-alt"></i> From Date</label>
+                        <input type="date" class="filter-input">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-calendar-alt"></i> To Date</label>
+                        <input type="date" class="filter-input">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-hashtag"></i> Job Order No.</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-id-card"></i> Plate No.</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-car-side"></i> Vehicle Make</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Kia">KIA</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="GMC">GMC</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-warehouse"></i> Garage</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-file-invoice"></i> MOI Job Order No.</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-tasks"></i> Current JO Status</label>
+                        <select class="filter-select">
+                            <option value="">All</option>
+                            <option value="Estimation Approved">Estimation Approved</option>
+                            <option value="Warranty Initiated">Warranty Initiated</option>
+                            <option value="JO Submitted">JO Submitted</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group" style="display: flex; align-items: flex-end;">
+                        <div class="filter-button-group">
+                            <button class="filter-button"><i class="fas fa-search"></i> Proceed</button>
+                            <button class="filter-button secondary"><i class="fas fa-redo-alt"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Orders Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title"><i class="fas fa-list"></i> Job Orders in March 2025</h3>
+                    <div class="table-actions">
+                        <button class="table-button" title="Export to Excel"><i class="fas fa-file-excel"></i></button>
+                        <button class="table-button" title="Export to PDF"><i class="fas fa-file-pdf"></i></button>
+                        <button class="table-button" title="Print"><i class="fas fa-print"></i></button>
+                        <button class="table-button" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <!-- Mobile scroll indicator -->
+                <div class="mobile-scroll-hint">
+                    <i class="fas fa-arrows-left-right"></i> Scroll to see more
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-sort-numeric-down"></i> S.No.</th>
+                            <th><i class="fas fa-hashtag"></i> JO No.</th>
+                            <th><i class="fas fa-calendar-day"></i> JO Date</th>
+                            <th><i class="fas fa-user-cog"></i> Technician</th>
+                            <th><i class="fas fa-id-card"></i> Plate No.</th>
+                            <th><i class="fas fa-car"></i> Vehicle Make</th>
+                            <th><i class="fas fa-warehouse"></i> Garage</th>
+                            <th><i class="fas fa-info-circle"></i> JO Status</th>
+                            <th><i class="fas fa-cogs"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>KOJMIGIM/002053000005</td>
+                            <td>23/03/2025</td>
+                            <td>11433</td>
+                            <td>GMC</td>
+                            <td>MOI SULABIYA MAIN</td>
+                            <td><span class="status-badge status-warranty"><i class="fas fa-shield-alt"></i> Warranty Initiated</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <div class="action-button" title="View Details"><i class="fas fa-eye"></i></div>
+                                    <div class="action-button" title="Edit Record"><i class="fas fa-pen-to-square"></i></div>
+                                    <div class="action-button" title="Print Report"><i class="fas fa-print"></i></div>
+                                    <div class="action-button" title="Download PDF"><i class="fas fa-file-pdf"></i></div>
+                                    <div class="action-button" title="Share"><i class="fas fa-share-nodes"></i></div>
+                                    <div class="action-button" title="Delete"><i class="fas fa-trash-can"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>KOJMIGIM/002053000002</td>
+                            <td>20/03/2025</td>
+                            <td>1216098</td>
+                            <td>TOYOTA</td>
+                            <td>MOI SULABIYA MAIN</td>
+                            <td><span class="status-badge status-submitted"><i class="fas fa-paper-plane"></i> JO Submitted</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <div class="action-button" title="View Details"><i class="fas fa-eye"></i></div>
+                                    <div class="action-button" title="Edit Record"><i class="fas fa-pen-to-square"></i></div>
+                                    <div class="action-button" title="Print Report"><i class="fas fa-print"></i></div>
+                                    <div class="action-button" title="Download PDF"><i class="fas fa-file-pdf"></i></div>
+                                    <div class="action-button" title="Share"><i class="fas fa-share-nodes"></i></div>
+                                    <div class="action-button" title="Delete"><i class="fas fa-trash-can"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>KOJMIGIM/002053000000</td>
+                            <td>19/03/2025</td>
+                            <td>071039</td>
+                            <td>KIA</td>
+                            <td>MOI AHMADI</td>
+                            <td><span class="status-badge status-estimation"><i class="fas fa-calculator"></i> Estimation Approved</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <div class="action-button" title="View Details"><i class="fas fa-eye"></i></div>
+                                    <div class="action-button" title="Edit Record"><i class="fas fa-pen-to-square"></i></div>
+                                    <div class="action-button" title="Print Report"><i class="fas fa-print"></i></div>
+                                    <div class="action-button" title="Download PDF"><i class="fas fa-file-pdf"></i></div>
+                                    <div class="action-button" title="Share"><i class="fas fa-share-nodes"></i></div>
+                                    <div class="action-button" title="Delete"><i class="fas fa-trash-can"></i></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px; align-items: center;">
+                    <div>Showing 1 to 5 of 16 entries</div>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="table-button" title="Previous"><i class="fas fa-chevron-left"></i></button>
+                        <button class="table-button" style="background-color: var(--primary); color: white;">1</button>
+                        <button class="table-button">2</button>
+                        <button class="table-button">3</button>
+                        <button class="table-button">4</button>
+                        <button class="table-button" title="Next"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <!-- Job Orders Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Job Orders by Status</h3>
+                    <div class="chart" id="jobOrdersChartContainer">
+                        <canvas id="jobOrdersChart"></canvas>
+                        <div class="placeholder-img chart" id="jobOrdersChartPlaceholder">
+                            <div>
+                                <i class="fas fa-chart-bar fa-3x"></i>
+                                <p>Job Orders Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Repair Jobs Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Repair Jobs by Type</h3>
+                    <div class="chart" id="repairJobsChartContainer">
+                        <canvas id="repairJobsChart"></canvas>
+                        <div class="placeholder-img chart" id="repairJobsChartPlaceholder">
+                            <div>
+                                <i class="fas fa-chart-pie fa-3x"></i>
+                                <p>Repair Jobs Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Monthly Trends Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title"><i class="fas fa-chart-line"></i> Monthly Job Order Trends</h3>
+                <div class="chart" id="monthlyTrendsChartContainer">
+                    <canvas id="monthlyTrendsChart"></canvas>
+                    <div class="placeholder-img chart" id="monthlyTrendsChartPlaceholder">
+                        <div>
+                            <i class="fas fa-chart-line fa-3x"></i>
+                            <p>Monthly Trends Chart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Charts Row -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title"><i class="fas fa-tasks"></i> Repair Jobs Status Breakdown</h3>
+                        <div class="chart-actions">
+                            <div class="chart-action" title="Download"><i class="fas fa-download"></i></div>
+                            <div class="chart-action" title="Refresh"><i class="fas fa-sync-alt"></i></div>
+                            <div class="chart-action" title="More options"><i class="fas fa-ellipsis-v"></i></div>
+                        </div>
+                    </div>
+                    <div class="chart">
+                        <canvas id="repairStatusChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title"><i class="fas fa-check-double"></i> Approval Workflow Status</h3>
+                        <div class="chart-actions">
+                            <div class="chart-action" title="Download"><i class="fas fa-download"></i></div>
+                            <div class="chart-action" title="Refresh"><i class="fas fa-sync-alt"></i></div>
+                            <div class="chart-action" title="More options"><i class="fas fa-ellipsis-v"></i></div>
+                        </div>
+                    </div>
+                    <div class="chart">
+                        <canvas id="approvalWorkflowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin: 30px 0;"></div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fas fa-chart-line"></i> Monthly Job Orders and Invoice Values (Last 12 Months)</h3>
+                    <div class="chart-actions">
+                        <div class="chart-action" title="Download"><i class="fas fa-download"></i></div>
+                        <div class="chart-action" title="Refresh"><i class="fas fa-sync-alt"></i></div>
+                        <div class="chart-action" title="More options"><i class="fas fa-ellipsis-v"></i></div>
+                    </div>
+                </div>
+                <div class="chart">
+                    <canvas id="monthlyTrendsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fas fa-business-time"></i> Running Job Cards by Technician</h3>
+                    <div class="chart-actions">
+                        <div class="chart-action" title="Download"><i class="fas fa-download"></i></div>
+                        <div class="chart-action" title="Refresh"><i class="fas fa-sync-alt"></i></div>
+                        <div class="chart-action" title="More options"><i class="fas fa-ellipsis-v"></i></div>
+                    </div>
+                </div>
+                <div class="chart">
+                    <canvas id="technicianJobsChart"></canvas>
+                </div>
+            </div>
+            
+            <div style="margin: 40px 0;"></div>
+            
+            <!-- Status Cards Row -->
+            <h3 style="margin-bottom: 20px; color: var(--primary); font-weight: 600;"><i class="fas fa-layer-group"></i> Detailed Status Breakdown</h3>
+            <div class="stats-container">
+                <div class="stat-card" style="border-left: 4px solid #3498db;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-tools" style="color: #3498db; margin-right: 8px;"></i>
+                            In Repair
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #3498db;">7</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-cog" style="color: #3498db;"></i>
+                        Active repair jobs
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #9b59b6;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-clipboard-check" style="color: #9b59b6; margin-right: 8px;"></i>
+                            Awaiting QC
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #9b59b6;">3</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-list-check" style="color: #9b59b6;"></i>
+                        Pending quality checks
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #2ecc71;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-truck" style="color: #2ecc71; margin-right: 8px;"></i>
+                            Ready for Delivery
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #2ecc71;">2</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-calendar-check" style="color: #2ecc71;"></i>
+                        Completed and ready
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #e74c3c;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c; margin-right: 8px;"></i>
+                            Parts Pending
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                            <i class="fas fa-dolly"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #e74c3c;">4</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-clock" style="color: #e74c3c;"></i>
+                        Waiting for parts
+                    </div>
+                </div>
+            </div>
+            
+            <!-- KPI Section -->
+            <div style="margin: 40px 0 20px 0;">
+                <h3 style="margin-bottom: 20px; color: var(--primary); font-weight: 600;"><i class="fas fa-gauge-high"></i> Key Performance Indicators</h3>
+                <div class="kpi-container">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Avg. Turnaround Time</div>
+                        <div class="gauge-container">
+                            <canvas id="turnaroundGauge"></canvas>
+                        </div>
+                        <div class="kpi-value">2.3 Days</div>
+                        <div class="kpi-target">Target: 3 Days</div>
+                        <div class="kpi-status good">
+                            <i class="fas fa-arrow-down"></i> 0.7 Days Below Target
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-title">First-Time Fix Rate</div>
+                        <div class="gauge-container">
+                            <canvas id="firstTimeFixGauge"></canvas>
+                        </div>
+                        <div class="kpi-value">89%</div>
+                        <div class="kpi-target">Target: 90%</div>
+                        <div class="kpi-status warning">
+                            <i class="fas fa-arrow-down"></i> 1% Below Target
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-title">Customer Satisfaction</div>
+                        <div class="gauge-container">
+                            <canvas id="satisfactionGauge"></canvas>
+                        </div>
+                        <div class="kpi-value">94%</div>
+                        <div class="kpi-target">Target: 85%</div>
+                        <div class="kpi-status good">
+                            <i class="fas fa-arrow-up"></i> 9% Above Target
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-title">Labor Utilization</div>
+                        <div class="gauge-container">
+                            <canvas id="laborUtilizationGauge"></canvas>
+                        </div>
+                        <div class="kpi-value">82%</div>
+                        <div class="kpi-target">Target: 85%</div>
+                        <div class="kpi-status warning">
+                            <i class="fas fa-arrow-down"></i> 3% Below Target
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Card Process Flow Section -->
+            <div style="margin: 40px 0 20px 0;">
+                <h3 style="margin-bottom: 20px; color: var(--primary); font-weight: 600;"><i class="fas fa-sitemap"></i> Job Card Process Flow</h3>
+                <div class="process-flow-container">
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-clipboard"></i>
+                            <span class="process-badge">12</span>
+                        </div>
+                        <div class="process-title">Reception</div>
+                        <div class="process-subtitle">Initial assessment</div>
+                    </div>
+                    <div class="process-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <span class="process-badge">8</span>
+                        </div>
+                        <div class="process-title">Inspection</div>
+                        <div class="process-subtitle">Detailed diagnosis</div>
+                    </div>
+                    <div class="process-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span class="process-badge">5</span>
+                        </div>
+                        <div class="process-title">Estimation</div>
+                        <div class="process-subtitle">Cost approval</div>
+                    </div>
+                    <div class="process-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-wrench"></i>
+                            <span class="process-badge">7</span>
+                        </div>
+                        <div class="process-title">Repair</div>
+                        <div class="process-subtitle">Service execution</div>
+                    </div>
+                    <div class="process-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span class="process-badge">3</span>
+                        </div>
+                        <div class="process-title">Quality Check</div>
+                        <div class="process-subtitle">Final inspection</div>
+                    </div>
+                    <div class="process-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="process-stage">
+                        <div class="process-icon">
+                            <i class="fas fa-car"></i>
+                            <span class="process-badge">2</span>
+                        </div>
+                        <div class="process-title">Delivery</div>
+                        <div class="process-subtitle">Handover to client</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Access Cards -->
+            <div class="stats-container">
+                <div class="stat-card" style="border-left: 4px solid #4caf50;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-file-circle-plus" style="color: #4caf50; margin-right: 8px;"></i>
+                            Create New Job Order
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #4caf50, #45a049);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="filter-button" style="width: 100%; background: linear-gradient(135deg, #4caf50, #45a049); border-radius: 8px; padding: 12px;">
+                            <i class="fas fa-file-circle-plus"></i> Create New Job Order
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #ff9800;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-clock" style="color: #ff9800; margin-right: 8px;"></i>
+                            Pending Approvals
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #ff9800, #fb8c00);">
+                            <i class="fas fa-hourglass"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #ff9800;">8</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-exclamation-circle" style="color: #ff9800;"></i>
+                        Requires your attention
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <a href="#" style="text-decoration: none; color: #ff9800; font-size: 14px; display: flex; align-items: center;">
+                            <i class="fas fa-arrow-right" style="margin-right: 5px;"></i> View all pending approvals
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #f44336;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-triangle-exclamation" style="color: #f44336; margin-right: 8px;"></i>
+                            Maintenance Alerts
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #f44336, #e53935);">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" style="color: #f44336;">3</div>
+                    <div class="stat-card-total">
+                        <i class="fas fa-wrench" style="color: #f44336;"></i>
+                        Critical maintenance needed
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <a href="#" style="text-decoration: none; color: #f44336; font-size: 14px; display: flex; align-items: center;">
+                            <i class="fas fa-arrow-right" style="margin-right: 5px;"></i> View maintenance details
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-left: 4px solid #2196f3;">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">
+                            <i class="fas fa-file-export" style="color: #2196f3; margin-right: 8px;"></i>
+                            Generate Reports
+                        </div>
+                        <div class="stat-card-icon" style="background: linear-gradient(135deg, #2196f3, #1e88e5);">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="filter-button" style="width: 100%; background: linear-gradient(135deg, #2196f3, #1e88e5); border-radius: 8px; padding: 12px;">
+                            <i class="fas fa-download"></i> Download Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div>© 2025 KPTC Dashboard System. All rights reserved.</div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link"><i class="fas fa-book-open"></i> Documentation</a>
+                    <a href="#" class="footer-link"><i class="fas fa-headset"></i> Support</a>
+                    <a href="#" class="footer-link"><i class="fas fa-shield-halved"></i> Privacy Policy</a>
+                    <a href="#" class="footer-link"><i class="fas fa-gear"></i> Settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize mobile menu
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.querySelector('.sidebar-overlay');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+        
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Close sidebar with escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+        
+        // Initialize charts with proper error handling
+        function initializeCharts() {
+            const isMobile = window.innerWidth < 768;
+            // Common chart options
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: isMobile ? 0 : 1000 // Disable animations on mobile
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            };
+            
+            try {
+                // Job Orders Chart
+                const jobOrdersCanvas = document.getElementById('jobOrdersChart');
+                const jobOrdersPlaceholder = document.getElementById('jobOrdersChartPlaceholder');
+                
+                if (jobOrdersCanvas && jobOrdersCanvas.getContext) {
+                    if (jobOrdersPlaceholder) jobOrdersPlaceholder.style.display = 'none';
+                    
+                    const jobOrdersChart = new Chart(jobOrdersCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
+                            datasets: [{
+                                label: 'Job Orders',
+                                data: [65, 45, 93, 12],
+                                backgroundColor: [
+                                    '#4e73df',
+                                    '#f6c23e',
+                                    '#1cc88a',
+                                    '#e74a3b'
+                                ]
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                } else {
+                    console.warn('Job Orders chart canvas not found or context not available');
+                    if (jobOrdersPlaceholder) jobOrdersPlaceholder.style.display = 'flex';
+                }
+                
+                // Repair Jobs Chart
+                const repairJobsCanvas = document.getElementById('repairJobsChart');
+                const repairJobsPlaceholder = document.getElementById('repairJobsChartPlaceholder');
+                
+                if (repairJobsCanvas && repairJobsCanvas.getContext) {
+                    if (repairJobsPlaceholder) repairJobsPlaceholder.style.display = 'none';
+                    
+                    const repairJobsChart = new Chart(repairJobsCanvas, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Engine', 'Transmission', 'Brakes', 'Electrical', 'Body Work', 'Other'],
+                            datasets: [{
+                                data: [30, 22, 18, 15, 10, 5],
+                                backgroundColor: [
+                                    '#4e73df',
+                                    '#1cc88a',
+                                    '#36b9cc',
+                                    '#f6c23e',
+                                    '#e74a3b',
+                                    '#858796'
+                                ]
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                } else {
+                    console.warn('Repair Jobs chart canvas not found or context not available');
+                    if (repairJobsPlaceholder) repairJobsPlaceholder.style.display = 'flex';
+                }
+                
+                // Monthly Trends Chart
+                const monthlyTrendsCanvas = document.getElementById('monthlyTrendsChart');
+                const monthlyTrendsPlaceholder = document.getElementById('monthlyTrendsChartPlaceholder');
+                
+                if (monthlyTrendsCanvas && monthlyTrendsCanvas.getContext) {
+                    if (monthlyTrendsPlaceholder) monthlyTrendsPlaceholder.style.display = 'none';
+                    
+                    const monthlyTrendsChart = new Chart(monthlyTrendsCanvas, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                            datasets: [{
+                                label: 'New Orders',
+                                data: [50, 60, 75, 80, 95, 110, 120, 130, 100, 95, 85, 80],
+                                borderColor: '#4e73df',
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: 'Completed Orders',
+                                data: [30, 40, 55, 70, 80, 90, 100, 110, 85, 80, 70, 65],
+                                borderColor: '#1cc88a',
+                                backgroundColor: 'rgba(28, 200, 138, 0.05)',
+                                tension: 0.3,
+                                fill: true
+                            }]
+                        },
+                        options: chartOptions
+                    });
+                } else {
+                    console.warn('Monthly Trends chart canvas not found or context not available');
+                    if (monthlyTrendsPlaceholder) monthlyTrendsPlaceholder.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+        
+        // Ensure Chart.js is loaded before initialization
+        if (typeof Chart !== 'undefined') {
+            initializeCharts();
+        } else {
+            console.warn('Chart.js not loaded, using placeholders instead');
+            // Show all placeholders if Chart.js is not available
+            document.querySelectorAll('.placeholder-img.chart').forEach(placeholder => {
+                placeholder.style.display = 'flex';
+            });
+        }
+    </script>
+</body>
+</html>
+                    
