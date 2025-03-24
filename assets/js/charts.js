@@ -438,7 +438,7 @@ function initializeAdditionalCharts(options) {
             const technicianChart = new Chart(technicianCanvas, {
                 type: 'bar',
                 data: {
-                    labels: ['Tech 1', 'Tech 2', 'Tech 3', 'Tech 4', 'Tech 5'],
+                    labels: ['Mike (Engine)', 'Sara (Electrical)', 'Raj (Brakes)', 'Carlos (Transmission)', 'Ahmed (Body Work)'],
                     datasets: [{
                         label: 'Active Jobs',
                         backgroundColor: '#4e73df',
