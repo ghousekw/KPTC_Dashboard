@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>KPTC Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Main script and charts script -->
+    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/charts.js" defer></script>
     <!-- Preload logo image to improve loading -->
     <link rel="preload" href="assets/images/kptc-logo.png" as="image">
     <style>
@@ -34,6 +37,20 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Hide mobile menu button on desktop */
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none !important;
+            }
+        }
+        
+        /* Only show mobile menu button on mobile */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex !important;
+            }
         }
         
         body {
@@ -907,7 +924,6 @@
         
         /* Mobile Menu Button - Hidden by Default */
         .mobile-menu-btn {
-            display: none;
             position: fixed;
             top: 15px;
             left: 15px;
@@ -956,6 +972,9 @@
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
             }
             
             .sidebar {
@@ -980,16 +999,20 @@
             }
             
             .main-content {
-                padding: 15px;
+                padding: 15px 10px;
                 padding-top: 60px; /* Space for the mobile menu button */
+                width: 100%;
+                overflow-x: hidden;
+                max-width: 100vw;
             }
             
             /* Mobile header fixes */
             .header {
                 flex-direction: column;
-                padding: 15px;
+                padding: 15px 10px;
                 margin-bottom: 15px;
                 text-align: center;
+                width: 100%;
             }
             
             .header-left {
@@ -1084,11 +1107,15 @@
             /* Make charts mobile friendly */
             .chart {
                 height: 250px;
+                width: 100%;
+                max-width: 100%;
             }
             
             .chart-container {
                 padding: 15px 10px;
                 margin-bottom: 15px;
+                width: 100%;
+                max-width: 100%;
             }
             
             .chart-title {
@@ -1433,14 +1460,18 @@
             margin: 0;
             font-size: 14px;
         }
+
+        .charts-grid {
+            width: 100%;
+            max-width: 100%;
+            gap: 15px;
+        }
     </style>
-    <!-- Custom Charts Script -->
-    <script src="assets/js/charts.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn" style="display: flex !important; z-index: 9999; position: fixed; top: 10px; left: 10px; background-color: #223b73; color: white; border: none; border-radius: 4px; padding: 8px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+        <button class="mobile-menu-btn">
             <i class="fas fa-bars"></i>
         </button>
         
@@ -1451,8 +1482,8 @@
         <div class="sidebar">
             <div class="brand">
                 <div class="logo-container">
-                    <img src="assets/images/kptc-logo-new.png" alt="KPTC Logo" 
-                         onerror="this.onerror=null; this.src='assets/images/kptc-logo.png'; this.onerror=function(){this.style.display='none'; document.querySelector('.svg-fallback').style.display='flex';};">
+                    <img src="assets/images/kptc-logo.png" alt="KPTC Logo" 
+                         onerror="this.style.display='none'; document.querySelector('.svg-fallback').style.display='flex';">
                     <div class="svg-fallback">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60">
                             <text x="10" y="40" fill="#223b73" font-size="40" font-weight="bold" font-family="Arial, sans-serif">KPTC</text>
@@ -2160,164 +2191,6 @@
             </div>
         </div>
     </div>
-    
-    <script>
-        // Initialize mobile menu
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarOverlay = document.querySelector('.sidebar-overlay');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
-        });
-        
-        sidebarOverlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-        });
-        
-        // Close sidebar with escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            }
-        });
-        
-        // Initialize charts with proper error handling
-        function initializeCharts() {
-            const isMobile = window.innerWidth < 768;
-            // Common chart options
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: isMobile ? 0 : 1000 // Disable animations on mobile
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
-                }
-            };
-            
-            try {
-                // Job Orders Chart
-                const jobOrdersCanvas = document.getElementById('jobOrdersChart');
-                const jobOrdersPlaceholder = document.getElementById('jobOrdersChartPlaceholder');
-                
-                if (jobOrdersCanvas && jobOrdersCanvas.getContext) {
-                    if (jobOrdersPlaceholder) jobOrdersPlaceholder.style.display = 'none';
-                    
-                    const jobOrdersChart = new Chart(jobOrdersCanvas, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
-                            datasets: [{
-                                label: 'Job Orders',
-                                data: [65, 45, 93, 12],
-                                backgroundColor: [
-                                    '#4e73df',
-                                    '#f6c23e',
-                                    '#1cc88a',
-                                    '#e74a3b'
-                                ]
-                            }]
-                        },
-                        options: chartOptions
-                    });
-                } else {
-                    console.warn('Job Orders chart canvas not found or context not available');
-                    if (jobOrdersPlaceholder) jobOrdersPlaceholder.style.display = 'flex';
-                }
-                
-                // Repair Jobs Chart
-                const repairJobsCanvas = document.getElementById('repairJobsChart');
-                const repairJobsPlaceholder = document.getElementById('repairJobsChartPlaceholder');
-                
-                if (repairJobsCanvas && repairJobsCanvas.getContext) {
-                    if (repairJobsPlaceholder) repairJobsPlaceholder.style.display = 'none';
-                    
-                    const repairJobsChart = new Chart(repairJobsCanvas, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Engine', 'Transmission', 'Brakes', 'Electrical', 'Body Work', 'Other'],
-                            datasets: [{
-                                data: [30, 22, 18, 15, 10, 5],
-                                backgroundColor: [
-                                    '#4e73df',
-                                    '#1cc88a',
-                                    '#36b9cc',
-                                    '#f6c23e',
-                                    '#e74a3b',
-                                    '#858796'
-                                ]
-                            }]
-                        },
-                        options: chartOptions
-                    });
-                } else {
-                    console.warn('Repair Jobs chart canvas not found or context not available');
-                    if (repairJobsPlaceholder) repairJobsPlaceholder.style.display = 'flex';
-                }
-                
-                // Monthly Trends Chart
-                const monthlyTrendsCanvas = document.getElementById('monthlyTrendsChart');
-                const monthlyTrendsPlaceholder = document.getElementById('monthlyTrendsChartPlaceholder');
-                
-                if (monthlyTrendsCanvas && monthlyTrendsCanvas.getContext) {
-                    if (monthlyTrendsPlaceholder) monthlyTrendsPlaceholder.style.display = 'none';
-                    
-                    const monthlyTrendsChart = new Chart(monthlyTrendsCanvas, {
-                        type: 'line',
-                        data: {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                            datasets: [{
-                                label: 'New Orders',
-                                data: [50, 60, 75, 80, 95, 110, 120, 130, 100, 95, 85, 80],
-                                borderColor: '#4e73df',
-                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                                tension: 0.3,
-                                fill: true
-                            }, {
-                                label: 'Completed Orders',
-                                data: [30, 40, 55, 70, 80, 90, 100, 110, 85, 80, 70, 65],
-                                borderColor: '#1cc88a',
-                                backgroundColor: 'rgba(28, 200, 138, 0.05)',
-                                tension: 0.3,
-                                fill: true
-                            }]
-                        },
-                        options: chartOptions
-                    });
-                } else {
-                    console.warn('Monthly Trends chart canvas not found or context not available');
-                    if (monthlyTrendsPlaceholder) monthlyTrendsPlaceholder.style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Error initializing charts:', error);
-            }
-        }
-        
-        // Ensure Chart.js is loaded before initialization
-        if (typeof Chart !== 'undefined') {
-            initializeCharts();
-        } else {
-            console.warn('Chart.js not loaded, using placeholders instead');
-            // Show all placeholders if Chart.js is not available
-            document.querySelectorAll('.placeholder-img.chart').forEach(placeholder => {
-                placeholder.style.display = 'flex';
-            });
-        }
-    </script>
 </body>
 </html>
                     
